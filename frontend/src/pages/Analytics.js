@@ -344,7 +344,7 @@ const Analytics = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <span className="text-sm font-medium text-gray-900">Low Risk (<40)</span>
+                    <span className="text-sm font-medium text-gray-900">Low Risk (&lt;40)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold text-gray-900">{riskDist.low}</span>
