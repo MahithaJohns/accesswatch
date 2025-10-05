@@ -8,7 +8,8 @@ import {
   Settings,
   Menu,
   X,
-  AlertTriangle
+  AlertTriangle,
+  User
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
