@@ -186,14 +186,25 @@ const Users = () => {
           <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
           <p className="text-gray-600 mt-1">Monitor user accounts, MFA status, and security risks</p>
         </div>
-        <Button 
-          onClick={handleExport}
-          className="gap-2 export-button"
-          data-testid="export-users-btn"
-        >
-          <Download className="h-4 w-4" />
-          Export CSV
-        </Button>
+        <div className="flex gap-3">
+          <Link to="/users/add">
+            <Button 
+              className="gap-2 security-button"
+              data-testid="add-staff-btn"
+            >
+              <User className="h-4 w-4" />
+              Add Staff
+            </Button>
+          </Link>
+          <Button 
+            onClick={handleExport}
+            className="gap-2 export-button"
+            data-testid="export-users-btn"
+          >
+            <Download className="h-4 w-4" />
+            Export CSV
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
