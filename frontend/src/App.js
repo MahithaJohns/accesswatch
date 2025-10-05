@@ -24,6 +24,7 @@ function App() {
             <Route path="/users/add" element={<AddStaff />} />
             <Route path="/users/:email" element={<UserDetail />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/threat-monitoring" element={<ThreatMonitoring />} />
           </Routes>
         </Layout>
       </Router>
