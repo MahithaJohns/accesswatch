@@ -21,6 +21,7 @@ const Layout = ({ children }) => {
     { name: 'Users', href: '/users', icon: Users },
     { name: 'Add Staff', href: '/users/add', icon: User },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+    { name: 'Threat Monitoring', href: '/threat-monitoring', icon: Shield },
   ];
 
   const isActive = (href) => {
