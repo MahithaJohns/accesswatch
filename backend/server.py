@@ -224,6 +224,44 @@ async def get_users(
     
     return filtered_users
 
+@api_router.post("/users", response_model=User)
+async def create_user(user_data: UserCreate):
+    """Create a new user"""
+    # Check if user already exists
+    existing_user = next((u for u in mock_users if u.email == user_data.email), None)
+    if existing_user:
+        raise HTTPException(status_code=400, detail="User with this email already exists")
+    
+    # Calculate initial risk score
+    risk_score = 0
+    if user_data.mfa_status == "Not Enabled":
+        risk_score += 30
+    if user_data.role in ["Admin", "Finance Manager", "HR Director", "IT Specialist"]:
+        risk_score += 40
+    
+    # Create new user
+    new_user = User(
+        email=user_data.email,
+        name=user_data.name,
+        role=user_data.role,
+        department=user_data.department,
+        device_id=user_data.device_id,
+        device_name=user_data.device_name,
+        device_type=user_data.device_type,
+        mfa_status=user_data.mfa_status,
+        mfa_methods=user_data.mfa_methods,
+        breached=False,
+        breach_sources=[],
+        last_login=datetime.now(timezone.utc),
+        suspicious_logins=0,
+        risk_score=risk_score
+    )
+    
+    # Add to mock users list
+    mock_users.append(new_user)
+    
+    return new_user
+
 @api_router.get("/users/{email}", response_model=UserDetail)
 async def get_user_detail(email: str):
     """Get detailed user information"""
