@@ -214,6 +214,14 @@ const UserDetail = () => {
                     <span>{user.department}</span>
                   </div>
                 </div>
+                <div className="flex items-center gap-4 mt-1 text-xs text-gray-400">
+                  <div className="flex items-center gap-1">
+                    <Eye className="h-3 w-3" />
+                    <span>{user.device_id || 'No Device ID'}</span>
+                  </div>
+                  <div>{user.device_name || 'No Device Name'}</div>
+                  <div>{user.device_type || 'Unknown OS'}</div>
+                </div>
               </div>
             </div>
             
