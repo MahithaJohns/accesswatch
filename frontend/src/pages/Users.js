@@ -342,6 +342,7 @@ const Users = () => {
                     <th className="text-left py-3 px-4">
                       <SortButton field="department">Department</SortButton>
                     </th>
+                    <th className="text-left py-3 px-4">Device Info</th>
                     <th className="text-left py-3 px-4">MFA Status</th>
                     <th className="text-left py-3 px-4">Breach Status</th>
                     <th className="text-left py-3 px-4">
