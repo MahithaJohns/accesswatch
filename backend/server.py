@@ -503,6 +503,173 @@ async def maltego_suspicious_logins(email: str):
         "status": "suspicious" if user.suspicious_logins > 0 else "normal"
     }
 
+# Google Workspace Integration endpoints
+@api_router.get("/google-workspace/login-activities/{email}")
+async def get_google_workspace_logins(email: str):
+    """Get Google Workspace login activities for user"""
+    user = next((u for u in mock_users if u.email == email), None)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Mock Google Workspace login data
+    login_activities = []
+    for i in range(20):
+        days_ago = random.randint(0, 30)
+        hours_ago = random.randint(0, 23)
+        login_time = datetime.now(timezone.utc) - timedelta(days=days_ago, hours=hours_ago)
+        
+        # Simulate some suspicious activities
+        is_suspicious = random.random() < 0.1
+        
+        activity = {
+            "timestamp": login_time.isoformat(),
+            "ip_address": f"{random.randint(1,255)}.{random.randint(1,255)}.{random.randint(1,255)}.{random.randint(1,255)}",
+            "location": random.choice(["Stockholm, Sweden", "Gothenburg, Sweden", "Malmö, Sweden", "Copenhagen, Denmark", "Unknown Location"]),
+            "device": random.choice(["Windows 11 - Chrome 118", "macOS 14 - Safari 17", "Android 13 - Chrome Mobile", "iOS 17 - Safari Mobile"]),
+            "event_type": random.choice(["login_success", "login_failure", "logout", "mfa_challenge"]),
+            "success": random.random() > 0.1,
+            "suspicious": is_suspicious,
+            "risk_factors": []
+        }
+        
+        if is_suspicious:
+            activity["risk_factors"] = random.sample([
+                "unusual_location", "impossible_travel", "new_device", "multiple_failed_attempts", "unusual_time"
+            ], random.randint(1, 3))
+        
+        login_activities.append(activity)
+    
+    return {
+        "user_email": email,
+        "total_activities": len(login_activities),
+        "suspicious_activities": len([a for a in login_activities if a["suspicious"]]),
+        "activities": login_activities
+    }
+
+@api_router.get("/security/bad-website-detection/{email}")
+async def get_bad_website_detection(email: str):
+    """Detect if user's company email is being used on malicious websites"""
+    user = next((u for u in mock_users if u.email == email), None)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Mock bad website detection data
+    bad_websites_detected = []
+    
+    # Simulate detection on various threat intelligence sources
+    threat_sources = [
+        "HaveIBeenPwned", "Dark Web Monitoring", "Threat Intelligence Feed", 
+        "Malware Analysis", "Phishing Database", "Domain Reputation"
+    ]
+    
+    malicious_sites = [
+        {"url": "fake-bank-login.com", "category": "phishing", "risk_score": 95, "description": "Banking credential harvesting"},
+        {"url": "malware-download.net", "category": "malware", "risk_score": 90, "description": "Malware distribution site"},
+        {"url": "crypto-scam-exchange.io", "category": "scam", "risk_score": 85, "description": "Cryptocurrency scam platform"},
+        {"url": "fake-microsoft-support.org", "category": "phishing", "risk_score": 88, "description": "Tech support scam"},
+        {"url": "suspicious-cloud-storage.com", "category": "suspicious", "risk_score": 70, "description": "Unverified cloud storage"},
+        {"url": "leaked-database-site.net", "category": "data_breach", "risk_score": 92, "description": "Data breach leak site"}
+    ]
+    
+    # 40% chance user's email found on bad websites
+    if random.random() < 0.4:
+        num_detections = random.randint(1, 4)
+        for _ in range(num_detections):
+            site = random.choice(malicious_sites)
+            detection = {
+                "website": site["url"],
+                "category": site["category"], 
+                "risk_score": site["risk_score"],
+                "description": site["description"],
+                "detected_at": (datetime.now(timezone.utc) - timedelta(days=random.randint(1, 90))).isoformat(),
+                "source": random.choice(threat_sources),
+                "email_usage_type": random.choice(["account_registration", "password_reset", "login_attempt", "data_submission"]),
+                "credentials_exposed": random.choice([True, False]),
+                "associated_data": random.choice(["password", "personal_info", "payment_data", "none"])
+            }
+            bad_websites_detected.append(detection)
+    
+    # Calculate overall risk
+    if bad_websites_detected:
+        max_risk = max(d["risk_score"] for d in bad_websites_detected)
+        avg_risk = sum(d["risk_score"] for d in bad_websites_detected) / len(bad_websites_detected)
+        overall_risk_level = "HIGH" if max_risk >= 90 else "MEDIUM" if max_risk >= 70 else "LOW"
+    else:
+        max_risk = 0
+        avg_risk = 0
+        overall_risk_level = "NONE"
+    
+    return {
+        "user_email": email,
+        "scan_timestamp": datetime.now(timezone.utc).isoformat(),
+        "total_detections": len(bad_websites_detected),
+        "overall_risk_level": overall_risk_level,
+        "max_risk_score": max_risk,
+        "average_risk_score": round(avg_risk, 2),
+        "detections": bad_websites_detected,
+        "recommendations": [
+            "Change passwords for all accounts immediately" if bad_websites_detected and any(d["credentials_exposed"] for d in bad_websites_detected) else None,
+            "Enable MFA on all critical accounts" if bad_websites_detected else None,
+            "Monitor credit reports for suspicious activity" if bad_websites_detected and any("payment" in d["associated_data"] for d in bad_websites_detected) else None,
+            "Educate user on phishing awareness" if bad_websites_detected and any(d["category"] == "phishing" for d in bad_websites_detected) else None,
+            "No immediate action required" if not bad_websites_detected else None
+        ]
+    }
+
+@api_router.get("/security/organization-threat-summary")
+async def get_organization_threat_summary():
+    """Get organization-wide threat summary"""
+    # Calculate organization-wide statistics
+    total_users = len(mock_users)
+    users_with_bad_websites = int(total_users * 0.4)  # 40% affected
+    high_risk_users = int(users_with_bad_websites * 0.3)  # 30% of affected are high risk
+    
+    threat_categories = {
+        "phishing": random.randint(15, 25),
+        "malware": random.randint(8, 15), 
+        "scam": random.randint(5, 12),
+        "data_breach": random.randint(10, 18),
+        "suspicious": random.randint(20, 30)
+    }
+    
+    return {
+        "organization": "Halmstad University",
+        "scan_date": datetime.now(timezone.utc).isoformat(),
+        "summary": {
+            "total_users_monitored": total_users,
+            "users_with_detections": users_with_bad_websites,
+            "high_risk_users": high_risk_users,
+            "total_threats_detected": sum(threat_categories.values()),
+            "threat_categories": threat_categories
+        },
+        "risk_distribution": {
+            "high_risk": high_risk_users,
+            "medium_risk": users_with_bad_websites - high_risk_users,
+            "low_risk": total_users - users_with_bad_websites
+        },
+        "top_threat_domains": [
+            {"domain": "fake-bank-login.com", "detections": 12, "risk_score": 95},
+            {"domain": "malware-download.net", "detections": 8, "risk_score": 90},
+            {"domain": "crypto-scam-exchange.io", "detections": 6, "risk_score": 85},
+            {"domain": "fake-microsoft-support.org", "detections": 5, "risk_score": 88},
+            {"domain": "suspicious-cloud-storage.com", "detections": 15, "risk_score": 70}
+        ],
+        "recent_threats": [
+            {
+                "threat": "New phishing campaign targeting university credentials",
+                "detected_at": (datetime.now(timezone.utc) - timedelta(days=2)).isoformat(),
+                "affected_users": 8,
+                "severity": "HIGH"
+            },
+            {
+                "threat": "Malware distribution via fake software updates",
+                "detected_at": (datetime.now(timezone.utc) - timedelta(days=5)).isoformat(),
+                "affected_users": 3,
+                "severity": "MEDIUM"
+            }
+        ]
+    }
+
 # Analytics endpoints
 @api_router.get("/analytics/mfa-trend")
 async def get_mfa_trend():
