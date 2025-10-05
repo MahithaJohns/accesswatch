@@ -82,6 +82,7 @@ class UserCreate(BaseModel):
 class UserDetail(User):
     login_history: List[Dict[str, Any]] = []
     breach_history: List[Dict[str, Any]] = []
+    website_history: List[Dict[str, Any]] = []
     risk_breakdown: Dict[str, int] = {}
 
 class Stats(BaseModel):
