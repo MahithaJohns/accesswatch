@@ -91,11 +91,26 @@ class MaltegoRisk(BaseModel):
     risk_level: str
 
 # Mock Data Generation
+def generate_device_id():
+    """Generate realistic device ID"""
+    return f"HU-{random.choice(['WS', 'LT', 'DT'])}-{random.randint(1000, 9999)}"
+
+def generate_device_name(name, device_type):
+    """Generate realistic device name"""
+    prefix_map = {
+        "Windows": "WIN",
+        "macOS": "MAC", 
+        "Linux": "LNX"
+    }
+    first_name = name.split()[0].upper()
+    return f"{prefix_map.get(device_type, 'DEV')}-{first_name}-{random.randint(10, 99)}"
+
 def generate_mock_users() -> List[User]:
     """Generate realistic mock user data"""
     departments = ["IT", "Finance", "HR", "Marketing", "Sales", "Operations", "Legal", "Engineering"]
     roles = ["Admin", "Manager", "User", "Finance Manager", "HR Director", "IT Specialist", "Sales Rep"]
     privileged_roles = ["Admin", "Finance Manager", "HR Director", "IT Specialist"]
+    device_types = ["Windows", "macOS", "Linux"]
     
     first_names = ["Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace", "Henry", "Ivy", "Jack",
                    "Kate", "Liam", "Maya", "Noah", "Olivia", "Paul", "Quinn", "Ruby", "Sam", "Tara"]
@@ -111,6 +126,11 @@ def generate_mock_users() -> List[User]:
         name = f"{first_name} {last_name}"
         role = random.choice(roles)
         department = random.choice(departments)
+        
+        # Device information
+        device_id = generate_device_id()
+        device_type = random.choice(device_types)
+        device_name = generate_device_name(name, device_type)
         
         # MFA status (80% have MFA enabled)
         mfa_enabled = random.random() < 0.8
