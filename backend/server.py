@@ -31,6 +31,21 @@ app = FastAPI(title="MFA Monitoring Dashboard", version="1.0.0")
 api_router = APIRouter(prefix="/api")
 
 # Data Models
+class LoginActivity(BaseModel):
+    timestamp: datetime
+    ip_address: str
+    location: str
+    device: str
+    success: bool
+    suspicious: bool = False
+
+class WebsiteActivity(BaseModel):
+    website: str
+    category: str  # "malicious", "suspicious", "safe"
+    risk_score: int  # 1-100
+    detected_at: datetime
+    ip_address: str
+
 class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     email: str
@@ -48,6 +63,10 @@ class User(BaseModel):
     suspicious_logins: int = 0
     risk_score: int
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    # Google Workspace integration fields
+    google_workspace_id: str = ""
+    login_activities: List[LoginActivity] = []
+    website_activities: List[WebsiteActivity] = []
 
 class UserCreate(BaseModel):
     email: str
