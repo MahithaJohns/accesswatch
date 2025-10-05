@@ -37,6 +37,9 @@ class User(BaseModel):
     name: str
     role: str
     department: str
+    device_id: str
+    device_name: str
+    device_type: str  # "Windows", "macOS", "Linux"
     mfa_status: str  # "Enabled" or "Not Enabled"
     mfa_methods: List[str] = []
     breached: bool
@@ -45,6 +48,17 @@ class User(BaseModel):
     suspicious_logins: int = 0
     risk_score: int
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class UserCreate(BaseModel):
+    email: str
+    name: str
+    role: str
+    department: str
+    device_id: str
+    device_name: str
+    device_type: str
+    mfa_status: str = "Not Enabled"
+    mfa_methods: List[str] = []
 
 class UserDetail(User):
     login_history: List[Dict[str, Any]] = []
