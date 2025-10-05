@@ -340,15 +340,15 @@ const UserDetail = () => {
             </Card>
           )}
 
-          {/* Login History */}
-          <Card className="security-card" data-testid="login-history-card">
+          {/* Google Workspace Login Activities */}
+          <Card className="security-card" data-testid="workspace-login-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-blue-600" />
-                Recent Login Activity
+                Google Workspace Login Activity
               </CardTitle>
               <CardDescription>
-                Latest login attempts and access patterns
+                Latest login attempts and access patterns from Google Workspace
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -380,6 +380,12 @@ const UserDetail = () => {
                               </div>
                             </>
                           )}
+                          {login.device && (
+                            <>
+                              <span>•</span>
+                              <span>{login.device}</span>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -393,6 +399,65 @@ const UserDetail = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Bad Website Detection */}
+          {user.website_history && user.website_history.length > 0 && (
+            <Card className="security-card border-red-200 bg-red-50" data-testid="bad-website-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-red-600" />
+                  Security Alert: Malicious Website Detection
+                </CardTitle>
+                <CardDescription>
+                  Company email detected on potentially malicious websites
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {user.website_history.map((website, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 bg-white border border-red-200 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-3 h-3 rounded-full ${
+                          website.category === 'malicious' ? 'bg-red-500' : 'bg-orange-500'
+                        }`}></div>
+                        <div>
+                          <div className="font-medium text-gray-900">{website.website}</div>
+                          <div className="text-sm text-gray-600 capitalize">{website.category} website</div>
+                          <div className="text-xs text-gray-500">
+                            Detected: {formatTimeAgo(website.detected_at)} • Source: {website.source}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <Badge 
+                          variant={website.category === 'malicious' ? 'destructive' : 'secondary'}
+                          className="mb-1"
+                        >
+                          Risk: {website.risk_score}
+                        </Badge>
+                        <div className="text-xs text-gray-500">High Priority</div>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5" />
+                      <div className="text-sm text-amber-800">
+                        <div className="font-medium">Immediate Action Required</div>
+                        <div className="mt-1">
+                          • Change all passwords immediately<br/>
+                          • Enable MFA on all accounts<br/>
+                          • Monitor for unauthorized access<br/>
+                          • Contact IT security team
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Sidebar */}
