@@ -371,6 +371,13 @@ const Users = () => {
                         </div>
                       </td>
                       <td className="py-4 px-4">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{user.device_id || 'N/A'}</div>
+                          <div className="text-xs text-gray-500">{user.device_name || 'No device'}</div>
+                          <div className="text-xs text-gray-400">{user.device_type || 'Unknown'}</div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4">
                         <div className="flex items-center gap-2">
                           {user.mfa_status === 'Enabled' ? (
                             <>
