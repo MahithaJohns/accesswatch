@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import Users from './pages/Users';
 import UserDetail from './pages/UserDetail';
 import Analytics from './pages/Analytics';
+import AddStaff from './pages/AddStaff';
 import Layout from './components/Layout';
 
 function App() {
