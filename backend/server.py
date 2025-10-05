@@ -345,6 +345,7 @@ async def get_user_detail(email: str):
         **user.dict(),
         login_history=login_history,
         breach_history=breach_history,
+        website_history=website_history,
         risk_breakdown=risk_breakdown
     )
     
