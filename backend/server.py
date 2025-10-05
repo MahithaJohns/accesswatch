@@ -288,7 +288,7 @@ async def get_user_detail(email: str):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    # Generate mock detailed data
+    # Generate mock detailed data with Google Workspace login activities
     login_history = []
     for i in range(10):
         days_ago = random.randint(1, 30)
@@ -296,8 +296,33 @@ async def get_user_detail(email: str):
             "timestamp": (datetime.now(timezone.utc) - timedelta(days=days_ago)).isoformat(),
             "ip_address": f"192.168.{random.randint(1,255)}.{random.randint(1,255)}",
             "location": random.choice(["Stockholm, Sweden", "Gothenburg, Sweden", "Malmö, Sweden", "Unknown"]),
+            "device": random.choice(["Windows 11 - Chrome", "macOS - Safari", "Android - Chrome"]),
             "suspicious": random.random() < 0.1
         })
+    
+    # Generate mock website activities (bad website detection)
+    website_history = []
+    bad_websites = [
+        {"url": "malware-site.com", "category": "malicious", "risk_score": 95},
+        {"url": "phishing-bank.net", "category": "malicious", "risk_score": 90},
+        {"url": "suspicious-download.org", "category": "suspicious", "risk_score": 70},
+        {"url": "fake-microsoft.com", "category": "malicious", "risk_score": 85},
+        {"url": "crypto-scam.io", "category": "suspicious", "risk_score": 75}
+    ]
+    
+    # Some users have used company email on bad websites
+    if random.random() < 0.3:  # 30% chance
+        num_bad_sites = random.randint(1, 3)
+        for _ in range(num_bad_sites):
+            bad_site = random.choice(bad_websites)
+            website_history.append({
+                "website": bad_site["url"],
+                "category": bad_site["category"],
+                "risk_score": bad_site["risk_score"],
+                "detected_at": (datetime.now(timezone.utc) - timedelta(days=random.randint(1, 60))).isoformat(),
+                "ip_address": f"192.168.{random.randint(1,255)}.{random.randint(1,255)}",
+                "source": "Dark web monitoring"
+            })
     
     breach_history = []
     if user.breached:
