@@ -371,7 +371,7 @@ async def export_csv(
     writer = csv.writer(output)
     
     # Header
-    writer.writerow(['Email', 'Name', 'Role', 'Department', 'MFA Status', 'Breached', 'Last Login', 'Risk Score'])
+    writer.writerow(['Email', 'Name', 'Role', 'Department', 'Device ID', 'Device Name', 'Device Type', 'MFA Status', 'Breached', 'Last Login', 'Risk Score'])
     
     # Data
     for user in filtered_users:
@@ -380,6 +380,9 @@ async def export_csv(
             user.name,
             user.role,
             user.department,
+            user.device_id,
+            user.device_name,
+            user.device_type,
             user.mfa_status,
             'Yes' if user.breached else 'No',
             user.last_login.strftime('%Y-%m-%d %H:%M:%S'),
